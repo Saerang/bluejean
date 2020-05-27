@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+<th:block layout:fragment="content">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">회비 등록</h1>
+        <p class="mb-4">* 월 회비 : 2만원</p>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <form class="form-horizontal mt-3" id="fee_from">
+                <div class="form-group">
+                    <label for="member_id" class="col-sm-2 control-label">User Id</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="member_id"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fee_month" class="col-sm-2 control-label">Fee Year</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="fee_year" placeholder="fee year">
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fee_month" class="col-sm-2 control-label">Fee Month</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="fee_month" placeholder="fee month">
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fee" class="col-sm-2 control-label">Fee</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="fee" placeholder="fee">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <a id="btn-save" class="btn btn-primary mr-3 my-2 text-white">Create</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+<script type="text/javascript">
+
+    var names = [];
+    var memberIds = [];
+
+
+    $(document).ready(function(){
+        var valid_page = 1;
+
+        var generateData = function (data) {
+            var dict = [];
+            var cnt = 0;
+
+            $.each(data, function (i, item) {
+                cnt++;
+                memberIds.push(item.memberId);
+                names.push(item.username);
+                dict.push({
+                    id: item.memberId,
+                    text: item.username
+                });
+            });
+
+            return dict;
+        };
+
+        $('#member_id').select2({
+            placeholder: "Select User",
+            allowClear: true,
+            width: "20em",
+            ajax: {
+                url: "/api/member",
+                dataType: "json",
+                data: function(term) {
+                    return term;
+                },
+                processResults: function (data) {
+                    var more = (valid_page * 100) < data.count;
+                    valid_page++;
+                    return {
+                        results: more ? generateData(data) : generateData(data),
+                        pagination: {more: more}
+                    };
+                },
+                matcher: function (term, text, option) {
+                    return text.toUpperCase().indexOf(term.toUpperCase()) >= 0 || option.val().toUpperCase().indexOf(term.toUpperCase()) >= 0;
+                }
+            }
+        });
+
+        $('#fee_month').select2({
+            placeholder: "select month",
+            width: "15em",
+            data:getMonth()
+        });
+
+        $('#fee_year').select2({
+            placeholder: "select year",
+            width: "15em",
+            data: getYear()
+        });
+
+        $('#btn-save').click(function(){
+            if(!confirm("등록 하시겠습니까?")){
+                return false;
+            }
+            var data = {
+                memberId: $('#member_id').val(),
+                fee: $('#fee').val(),
+                feeYear: $('#fee_year').val(),
+                feeMonth: $('#fee_month').val()
+            };
+            const token = $("meta[name='_csrf']").attr('content');
+            const header = $("meta[name='_csrf_header']").attr('content');
+
+            console.log(data)
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/fees',
+                dataType: 'json',
+                contentType:'application/json; charset=utf-8',
+                data: JSON.stringify(data),
+                beforeSend: function(xhr){
+                    xhr.setRequestHeader(header, token);
+                }
+            }).done(function() {
+                alert('글이 등록되었습니다.');
+                window.location.href = '/fees/fees';
+            }).fail(function (error) {
+                alert(JSON.stringify(error));
+            });
+        })
+    });
+</script>
+</th:block>
+</html>

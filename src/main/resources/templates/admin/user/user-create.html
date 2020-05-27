@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+<th:block layout:fragment="content">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">회원 등록</h1>
+        <p class="mb-4">* 다수결 만장일치 가입가능.</p>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <form class="form-horizontal mt-3" id="user_from">
+                <input type="hidden" id="csrf" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <div class="form-group">
+                    <label for="member_id" class="col-sm-2 control-label">User Id</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="member_id" placeholder="user id">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-sm-2 control-label">비밀번호</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="password" placeholder="password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="role" class="col-sm-2 control-label">권한</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="role">
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="username" class="col-sm-2 control-label">Username</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="username" placeholder="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="nickname" class="col-sm-2 control-label">Nickname</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="nickname" placeholder="nickname">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="mobile_number" class="col-sm-5 control-label">Mobile Number</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="mobile_number" placeholder="mobileNumber">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <a id="btn-save" class="btn btn-primary mr-3 my-2 text-white">Create</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#role').select2({
+            placeholder: "select meeting type",
+            width: "20em",
+            data: getMemberRole()
+        });
+
+        $('#btn-save').click(function(){
+            if(!confirm("등록 하시겠습니까?")){
+                return false;
+            }
+            var data = {
+                memberId: $('#member_id').val(),
+                password: $('#password').val(),
+                role: $('#role').val(),
+                username: $('#username').val(),
+                mobileNumber: $('#mobile_number').val(),
+                nickname: $('#nickname').val()
+            };
+            const token = $("meta[name='_csrf']").attr('content');
+            const header = $("meta[name='_csrf_header']").attr('content');
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/member',
+                dataType: 'json',
+                contentType:'application/json; charset=utf-8',
+                data: JSON.stringify(data),
+                beforeSend: function(xhr){
+                    xhr.setRequestHeader(header, token);
+                }
+            }).done(function() {
+                alert('회원가입이 완료 되었습니다.');
+                window.location.href = '/member/member';
+            }).fail(function (error) {
+                alert(JSON.stringify(error));
+            });
+        })
+    });
+</script>
+</th:block>
+</html>

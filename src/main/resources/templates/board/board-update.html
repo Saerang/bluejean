@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+<th:block layout:fragment="content">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <div class="ml-2">
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">게시판</h1>
+            <p class="mb-4">* 자유롭게 등록하세요</p>
+        </div>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <form class="form-horizontal mt-3">
+                <input type="hidden" id="boardId" name="boardId" th:value="${board.boardId}">
+                <input type="hidden" id="board_type" name="boardType" vlaue="CHAT">
+                <div class="form-group">
+                    <label for="title" class="col-sm-2 control-label">Title</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="title" name="title" placeholder="title" th:value="${board.title}">
+                    </div>
+                </div>
+                <!--<div class="form-group">
+                    <label for="board_content" class="col-sm-2 control-label">content</label>
+                    <div class="col-sm-10">
+                        <textarea type="text" class="form-control" id="board_content" name="content" placeholder="content" rows="10">[[*{board.content}]]</textarea>
+                    </div>
+                </div>-->
+                <div class="form-group">
+                    <label for="files" class="col-sm-2 control-label">File</label>
+                    <div class="col-sm-10">
+                        <input type="file" class="form-control" id="files" name="files" multiple/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="view_files" class="col-sm-2 control-label">File View</label>
+                    <div class="col-sm-10 row-cols-3" th:each="file : ${board.files}" id="view_files">
+                        <img th:src="${file.fileUrl}" class="rounded img-thumbnail" alt="blue-jean">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" id="btn-update" class="btn btn-primary mr-3 my-2 text-white">수정</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+
+            $('#btn-update').click(function(e){
+                e.preventDefault();
+
+                if(!confirm("수정 하시겠습니까?")){
+                    return false;
+                }
+                // $('#board_from').submit();
+
+                const boardId = $('#boardId').val();
+                const files = $('#files')[0].files;
+                const form_data = new FormData()
+                form_data.append('title', $('#title').val())
+                form_data.append('content', $('#content').val())
+
+                for(var i=0; i< files.length; ++i){
+                    form_data.append('files', files[i])
+                }
+
+                const token = $("meta[name='_csrf']").attr('content');
+                const header = $("meta[name='_csrf_header']").attr('content');
+
+
+                $.ajax({
+                    type: 'POST',
+                    // enctype: 'multipart/form-data',
+                    url: '/api/board/update/'+boardId,
+                    data: form_data,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function(xhr){
+                        xhr.setRequestHeader(header, token);
+                    }
+                }).done(function() {
+                    alert('글이 등록되었습니다.');
+                    window.location.href = '/board/boards';
+                }).fail(function (error) {
+                    alert(JSON.stringify(error));
+                });
+            })
+        });
+    </script>
+</th:block>
+</html>

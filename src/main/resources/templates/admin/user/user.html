@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+<th:block layout:fragment="content">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">회원 내역</h1>
+        <p class="mb-4">* 다수결 만장일치 가입가능.</p>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">User List</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive form-group">
+
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>MemberId</th>
+                            <th>MobileNumber</th>
+                            <th>Nickname</th>
+                            <th>Created Date</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        <tr th:each="user, index : ${users}">
+                            <td th:text="${index.size - index.index}"></td>
+                            <td><a th:href="@{/admin/user/userUpdate/{id}(id=${user.memberId})}" th:text="${user.userId}"></a></td>
+                            <td th:text="${user.mobileNumber}"></td>
+                            <td th:text="${user.nickname}"></td>
+                            <td th:text="${user.createdDate}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-lg-right">
+                        <a href="/admin/user/userCreate" class="btn btn-primary btn-icon-split mr-3 my-2">
+                        <span class="icon text-white-50">
+                          <i class="fas fa-flag"></i>
+                        </span>
+                            <span class="text">Create</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#dataTable').DataTable({
+                "ordering": false
+            })
+        });
+
+    </script>
+</th:block>
+</html>

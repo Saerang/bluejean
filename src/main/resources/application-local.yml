@@ -1,0 +1,28 @@
+spring:
+  profiles:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: none
+      format_sql: true
+  session:
+    store-type: jdbc
+  datasource:
+    url: jdbc:mariadb://127.0.0.1:3306/blue_jean
+    username:
+    password:
+    driver-class-name: org.mariadb.jdbc.Driver
+
+cloud:
+  aws:
+    credentials:
+      accessKey:
+      secretKey:
+    s3:
+      bucket:
+    region:
+      static:
+    stack:
+      auto: false

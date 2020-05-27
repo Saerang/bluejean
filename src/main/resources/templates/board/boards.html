@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+      layout:decorator="layout/default">
+
+<th:block layout:fragment="content">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="ml-2">
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">게시판</h1>
+            <p class="mb-4">* 글을 쓰자</p>
+        </div>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Board List</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive form-group">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>memberId</th>
+                            <th>Created Date</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        <tr th:each="board, index : ${boards}">
+                            <td th:text="${index.size - index.index}"></td>
+                            <td>
+                                <a th:href="@{/board/boardDetail/{boardId}(boardId=${board.boardId})}" th:text="${board.title}"></a>
+<!--                                <a th:if="${board.member.userId == #authentication.principal.username}" th:href="@{/board/boardUpdate/{boardId}(boardId=${board.boardId})}" th:text="${board.title}"></a>-->
+<!--                                <a th:if="${board.member.userId != #authentication.principal.username}" th:href="@{/board/boardDetail/{boardId}(boardId=${board.boardId})}" th:text="${board.title}"></a>-->
+                            </td>
+                            <td th:text="${board.member.username}"></td>
+                            <td th:text="${board.createdDate}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-lg-right">
+                        <a href="/board/boardCreate" class="btn btn-primary btn-icon-split mr-3 my-2">
+                        <span class="icon text-white-50">
+                          <i class="fas fa-flag"></i>
+                        </span>
+                            <span class="text">Create</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#dataTable').DataTable({
+                "ordering": false
+            })
+        });
+
+    </script>
+</th:block>
+</html>
