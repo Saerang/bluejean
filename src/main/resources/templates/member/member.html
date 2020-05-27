@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+      layout:decorator="layout/default">
+
+<th:block layout:fragment="content">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="ml-2">
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">회원 정보</h1>
+            <p class="mb-4">* 다수결 만장일치 가입가능.</p>
+        </div>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">User List</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive form-group">
+
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>memberId</th>
+                            <th>MobileNumber</th>
+                            <th>Nickname</th>
+                            <th>Created Date</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        <tr th:each="member, index : ${members}">
+                            <td th:text="${index.size - index.index}"></td>
+                            <td>
+                                <a sec:authorize="hasRole('ROLE_MEMBER')" th:href="@{/member/memberDetail/{id}(id=${member.memberId})}" th:text="${member.userId}"></a>
+                                <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/admin/user/userUpdate/{id}(id=${member.memberId})}" th:text="${member.userId}"></a>
+                            </td>
+                            <td th:text="${member.mobileNumber}"></td>
+                            <td th:text="${member.nickname}"></td>
+                            <td th:text="${member.createdDate}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-lg-right" sec:authorize="hasRole('ROLE_ADMIN')">
+                        <a href="/admin/user/userCreate" class="btn btn-primary btn-icon-split mr-3 my-2">
+                        <span class="icon text-white-50">
+                          <i class="fas fa-flag"></i>
+                        </span>
+                            <span class="text">Create</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#dataTable').DataTable({
+                "ordering": false
+            })
+        });
+
+    </script>
+</th:block>
+</html>

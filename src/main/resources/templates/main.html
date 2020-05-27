@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+<th:block layout:fragment="content">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">회비 내역</h1>
+        <p class="mb-4">* 월 회비 : 2만원</p>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Fee List</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive form-group">
+
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Fee</th>
+                            <th>Fee Month</th>
+                            <th>Created Date</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        <tr th:each="fee, index : ${fees}">
+                            <td th:text="${index.size - index.index}"></td>
+                            <td><a th:href="@{/fees/feesUpdate/{id}(id=${fee.id})}" th:text="${fee.memberId}"></a></td>
+                            <td th:text="${fee.fee}"></td>
+                            <td th:text="${fee.feeMonth}"></td>
+                            <td th:text="${fee.createdDate}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-lg-right">
+                        <a href="/fees/feesCreate" class="btn btn-primary btn-icon-split mr-3 my-2">
+                        <span class="icon text-white-50">
+                          <i class="fas fa-flag"></i>
+                        </span>
+                            <span class="text">Create</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#dataTable').DataTable({
+                "ordering": false
+            })
+        });
+
+    </script>
+</th:block>
+</html>

@@ -1,0 +1,25 @@
+spring:
+  profiles:
+    active: local
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      format_sql: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    type:
+      sql: true
+
+  devtools:
+    livereload:
+      enabled: true
+
+  servlet:
+    multipart:
+      max-file-size: 3072KB
+      max-request-size: 3072KB
+      enabled: true
+
+

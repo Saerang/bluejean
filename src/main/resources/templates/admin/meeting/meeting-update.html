@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+<th:block layout:fragment="content">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <div class="ml-2">
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">모임 등록</h1>
+            <p class="mb-4">* 짝수달 3째주 토요일</p>
+        </div>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <form class="form-horizontal mt-3" id="fee_from">
+                <input type="hidden" id="meeting_id" th:value="${meeting.meetingId}">
+                <div class="form-group">
+                    <label for="type" class="col-sm-2 control-label">Type</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="type">
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="meeting_order" class="col-sm-2 control-label">Order</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="meeting_order" th:value="${meeting.meetingOrder}"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="title" class="col-sm-2 control-label">Title</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="title" th:value="${meeting.title}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="meeting_content" class="col-sm-2 control-label">content</label>
+                    <div class="col-sm-10">
+                        <textarea type="text" class="form-control" id="meeting_content" rows="5">[[*{meeting.content}]]</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="place" class="col-sm-2 control-label">place</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="place" th:value="${meeting.place}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <a href="/meeting/meeting" id="btn-list" role="button" class="btn btn-primary ml-3 my-3 text-white">취소</a>
+                        <a id="btn-update" role="button" class="btn btn-primary ml- text-white">수정 완료</a>
+                        <a id="btn-delete" role="button" class="btn btn-primary ml-1 text-white">삭제</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script type="text/javascript">
+        $(document).ready(function(){
+            /* <![CDATA[ */
+            $('#type').select2({
+                placeholder: "select meeting type",
+                width: "20em",
+                data:getMeetingType()
+            });
+
+            $('#btn-update').click(function(){
+                if(!confirm("수정 하시겠습니까?")){
+                    return false;
+                }
+                var data = {
+                    type: $('#type').val(),
+                    meetingOrder: $('#meeting_order').val(),
+                    title: $('#title').val(),
+                    content: $('#meeting_content').val(),
+                    place: $('#place').val()
+                };
+                const id = $('#meeting_id').val();
+                const token = $("meta[name='_csrf']").attr('content');
+                const header = $("meta[name='_csrf_header']").attr('content');
+
+                $.ajax({
+                    type: 'PUT',
+                    url: '/api/meeting/update/'+id,
+                    dataType: 'json',
+                    contentType:'application/json; charset=utf-8',
+                    data: JSON.stringify(data),
+                    beforeSend: function(xhr){
+                        xhr.setRequestHeader(header, token);
+                    }
+                }).done(function() {
+                    alert('정기모임 정보가 수정되었습니다.');
+                    window.location.href = '/meeting/meeting';
+                }).fail(function (error) {
+                    alert(JSON.stringify(error));
+                });
+            })
+
+            $('#btn-delete').click(function(){
+                if(!confirm("삭제 하시겠습니까?")){
+                    return false;
+                }
+                const id = $('#id').val();
+                const token = $("meta[name='_csrf']").attr('content');
+                const header = $("meta[name='_csrf_header']").attr('content');
+
+                $.ajax({
+                    type: 'PUT',
+                    url: '/api/meeting/delete/'+id,
+                    dataType: 'json',
+                    contentType:'application/json; charset=utf-8',
+                    data: JSON.stringify({'isDeleted': 1}),
+                    beforeSend: function(xhr){
+                        xhr.setRequestHeader(header, token);
+                    }
+                }).done(function() {
+                    alert('정기모임 정보가 삭제 되었습니다.');
+                    window.location.href = '/meeting/meeting';
+                }).fail(function (error) {
+                    alert(JSON.stringify(error));
+                });
+            })
+
+            /* ]]> */
+        });
+    </script>
+</th:block>
+</html>

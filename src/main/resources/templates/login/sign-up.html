@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lagn="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<!-- 공통 헤더-->
+<th:block th:replace="fragments/header :: headFragment"></th:block>
+
+<body class="bg-gradient-primary">
+
+<div class="container">
+
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="row">
+                <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+                <div class="col-lg-7">
+                    <div class="p-5">
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                        </div>
+                        <form class="user">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <div class="form-group">
+                                <input type="text" class="form-control form-control-user" id="user_id" name="userId" placeholder="User Id">
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password">
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="password" class="form-control form-control-user" id="repeat_password" placeholder="Repeat Password">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control form-control-user" id="username" name="username" placeholder="User Name">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control form-control-user" id="nickname" name="nickname" placeholder="Nickname">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control form-control-user" id="mobile_number" name="mobileNumber" placeholder="Mobile Number">
+                            </div>
+
+                            <a id="btn-sing-up" class="btn btn-primary btn-user btn-block">
+                                Register Account
+                            </a>
+                            <hr>
+                            <a href="index.html" class="btn btn-google btn-user btn-block">
+                                <i class="fab fa-google fa-fw"></i> Register with Google
+                            </a>
+                            <a href="index.html" class="btn btn-facebook btn-user btn-block">
+                                <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
+                            </a>
+                        </form>
+                        <hr>
+                        <div class="text-center">
+                            <a class="small" href="forgot-password.html">Forgot Password?</a>
+                        </div>
+                        <div class="text-center">
+                            <a class="small" href="/login">Already have an account? Login!</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<th:block th:replace="fragments/script :: scriptFragment"></th:block>
+<!-- 화면 스크립트-->
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#btn-sing-up').click(function(){
+            if(!confirm('회원 가입 하시겠습니까?')){
+                return false;
+            }
+            const password = $('#password').val();
+            const repeat_password = $('#repeat_password').val();
+
+            if(password != repeat_password){
+                alert('비밀번호가 일치하지 않습니다.');
+                return false;
+            }
+
+            var data = {
+                userId: $('#user_id').val(),
+                username: $('#username').val(),
+                password: password,
+                mobileNumber: $('#mobile_number').val(),
+                nickname: $('#nickname').val()
+            };
+            const token = $("meta[name='_csrf']").attr('content');
+            const header = $("meta[name='_csrf_header']").attr('content');
+
+            console.log(data)
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/member',
+                dataType: 'json',
+                contentType:'application/json; charset=utf-8',
+                data: JSON.stringify(data),
+                beforeSend: function(xhr){
+                    xhr.setRequestHeader(header, token);
+                }
+            }).done(function() {
+                alert('회원가입이 완료 되었습니다.');
+                window.location.href = '/login';
+            }).fail(function (error) {
+                console.log(JSON.stringify(error));
+            });
+
+
+        })
+    });
+
+</script>
+
+</body>
+
+</html>
