@@ -7,6 +7,8 @@
 * java1.8
 * gradle
 * jpa
+* thymeleaf
+* spring boot
 
 * AWS
 * ec2
