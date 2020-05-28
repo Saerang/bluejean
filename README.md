@@ -8,7 +8,7 @@
 * gradle
 * jpa
 
-### <AWS>
+* AWS
 * ec2
 * route53
 * rds
